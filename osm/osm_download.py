@@ -8,6 +8,8 @@ AUTH = ''
 BOX_6 = 'bbox=50.186491,53.2439672,50.1942801,53.2488207'
 
 REL_SAMARA = '287507'
+REL_NSK = '1263373'
+REL_TOL = '1345135'
 
 FILES=open('files','w')
 
@@ -32,14 +34,13 @@ print re.findall(r'<status database="online" api="online" gpx="online"/>',open('
 
 # download map 6 proseka
 WGET('map?%s'%BOX_6,'Samara6')
- 
-# download Samara draft map
-WGET('relation/%s/full'%REL_SAMARA,REL_SAMARA)
- 
-# download subareas
- 
-for REL in re.findall(r'<member type="relation" ref="(\d+)" role="subarea"/>',open('%s.osm'%REL_SAMARA).read()):
+
+for REL in [REL_SAMARA,REL_NSK,REL_TOL]: 
+    # download Samara draft map
     WGET('relation/%s/full'%REL,REL)
+    # download subareas
+    for SUBREL in re.findall(r'<member type="relation" ref="(\d+)" role="subarea"/>',open('%s.osm'%REL).read()):
+        WGET('relation/%s/full'%SUBREL,SUBREL)
 
 FILES.close()
 
