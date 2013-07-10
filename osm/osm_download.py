@@ -1,8 +1,32 @@
-API_PROD = 'http://api.openstreetmap.org/api'
-API_DEV  = 'http://api06.dev.openstreetmap.org/api'
-API = API_DEV
+API = 'http://api.openstreetmap.org/api/0.6'
+# API  = 'http://api06.dev.openstreetmap.org/api/0.6'
 
-import os,sys,time
-os.system('wget -O %s.xml %s/%s'%('capabilities',API,'capabilities'))
+# AUTH = '--http-user=Pupkinz --http-password=jhOQfKvh'
+AUTH = ''
+
+# bounds minlat='53.2439672' minlon='50.186491' maxlat='53.2488207' maxlon='50.1942801'
+BOX_6 = 'bbox=50.186491,53.2439672,50.1942801,53.2488207'
+
+import os,sys,time,re
+
+def WGET(call,targ=''):
+    if targ:
+        T=targ
+    else:
+        T=call
+    C='wget %s -O %s.xml %s/%s'%(AUTH,T,API,call)
+    print C
+    return os.system(C)
+
+# get api status & capabs
+WGET('capabilities')
+# get permissions
+WGET('permissions')
+# check api online
+print re.findall(r'<status database="online" api="online" gpx="online"/>',open('capabilities.xml').read())[0]
+
+# download map
+WGET('map?%s'%BOX_6,'Samara6.osm')
+
 print '.'
 
